@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-
 import { ChallengesContext } from '../store/challenges-context.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -27,23 +26,39 @@ export default function ChallengeItem({
     updateChallengeStatus(challenge.id, 'completed');
   }
 
+  function handleActivate() {
+    updateChallengeStatus(challenge.id, 'active');
+  }
+
+  const isActive = challenge.status === 'failed'; // Check if the challenge is active
+
   return (
     <motion.li layout exit={{ y: -30, opacity: 0 }}>
       <article className="challenge-item">
         <header>
-          <img {...challenge.image} />
+          <img {...challenge.image} alt={challenge.title} />
           <div className="challenge-item-meta">
             <h2>{challenge.title}</h2>
             <p>Complete until {formattedDate}</p>
             <p className="challenge-item-actions">
-              <button onClick={handleCancel} className="btn-negative">
-                Mark as failed
-              </button>
-              <button onClick={handleComplete}>Mark as completed</button>
+              {isActive ? (
+                <>
+                  <button onClick={handleActivate} className="btn-negative">
+                    Mark as Active
+                  </button>
+                </>
+              ) : (
+                  <button onClick={handleCancel} className="btn-negative">
+                    Mark as Failed
+                  </button>
+              )}
+                <button onClick={handleComplete}>
+                  Mark as Completed
+                </button>
             </p>
           </div>
         </header>
-        <div className={`challenge-item-details `}>
+        <div className={`challenge-item-details`}>
           <p>
             <button onClick={onViewDetails}>
               View Details{' '}
@@ -57,17 +72,16 @@ export default function ChallengeItem({
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
-                exit={{height: 0, opacity: 0 }}
+                exit={{ height: 0, opacity: 0 }}
               >
-            <p className="challenge-item-description">
-              {challenge.description}
-            </p>
-          </motion.div>
+                <p className="challenge-item-description">
+                  {challenge.description}
+                </p>
+              </motion.div>
             )}
-        </AnimatePresence>
-
-      </div>
-    </article>
-    </motion.li >
+          </AnimatePresence>
+        </div>
+      </article>
+    </motion.li>
   );
 }
